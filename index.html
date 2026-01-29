@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Adventure Game Prompt Generator v1.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap');
+        body { font-family: 'Noto Sans JP', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); }
+        .prompt-card { @apply bg-white border border-gray-200 rounded-xl p-4 shadow-sm mb-4; }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen pb-12 text-gray-800">
+
+    <!-- Header -->
+    <header class="gradient-bg text-white py-12 shadow-lg mb-8">
+        <div class="container mx-auto px-4 text-center">
+            <div class="inline-block bg-white/20 px-3 py-1 rounded-full text-xs font-bold mb-4 backdrop-blur-sm">Version 1.0 Release</div>
+            <h1 class="text-3xl md:text-4xl font-extrabold mb-3 tracking-tight">AI ADV プロンプトジェネレーター</h1>
+            <p class="text-sm md:text-base opacity-90 max-w-2xl mx-auto leading-relaxed">
+                ChatGPTやGeminiなどの対話型AIを、瞬時に熟練のゲームマスターに変貌させる。
+                画像生成と物語進行を最適化し、安定したゲーム体験を構築するプロンプト作成ツール。
+            </p>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 max-w-3xl">
+        <div class="bg-white rounded-3xl shadow-xl overflow-hidden mb-8 border border-gray-100">
+            <!-- Settings Panel -->
+            <div class="p-6 md:p-10 space-y-8">
+                
+                <!-- Scenario Selection -->
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-4 flex items-center gap-2">
+                        <span class="bg-indigo-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">1</span>
+                        シナリオ・テンプレートを選択
+                    </label>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <button onclick="selectScenario('mystery')" id="btn-mystery" class="scenario-btn border-2 border-indigo-50 p-4 rounded-2xl hover:bg-indigo-50 transition-all text-left group">
+                            <div class="text-2xl mb-2 group-hover:scale-110 transition-transform">🔍</div>
+                            <div class="font-bold text-gray-800 text-sm md:text-base">推理</div>
+                            <div class="text-[10px] text-gray-400">Suspense</div>
+                        </button>
+                        <button onclick="selectScenario('dungeon')" id="btn-dungeon" class="scenario-btn border-2 border-indigo-50 p-4 rounded-2xl hover:bg-indigo-50 transition-all text-left group">
+                            <div class="text-2xl mb-2 group-hover:scale-110 transition-transform">⚔️</div>
+                            <div class="font-bold text-gray-800 text-sm md:text-base">RPG</div>
+                            <div class="text-[10px] text-gray-400">Fantasy</div>
+                        </button>
+                        <button onclick="selectScenario('escape')" id="btn-escape" class="scenario-btn border-2 border-indigo-50 p-4 rounded-2xl hover:bg-indigo-50 transition-all text-left group">
+                            <div class="text-2xl mb-2 group-hover:scale-110 transition-transform">🚪</div>
+                            <div class="font-bold text-gray-800 text-sm md:text-base">脱出</div>
+                            <div class="text-[10px] text-gray-400">Escape</div>
+                        </button>
+                        <button onclick="selectScenario('custom')" id="btn-custom" class="scenario-btn border-2 border-indigo-50 p-4 rounded-2xl hover:bg-indigo-50 transition-all text-left group">
+                            <div class="text-2xl mb-2 group-hover:scale-110 transition-transform">✨</div>
+                            <div class="font-bold text-gray-800 text-sm md:text-base">カスタム</div>
+                            <div class="text-[10px] text-gray-400">Original</div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Custom Adventure Form -->
+                <div id="customForm" class="hidden p-6 bg-gray-50 rounded-2xl border border-gray-200 space-y-5 animate-fade-in">
+                    <h3 class="font-bold text-indigo-700 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" /></svg>
+                        オリジナル設定を構築
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">ジャンル / 世界観</label>
+                            <input type="text" id="customGenre" placeholder="例：SFスペースオペラ" class="w-full px-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">勝利条件</label>
+                            <input type="text" id="customGoal" placeholder="例：古代遺跡から脱出する" class="w-full px-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">導入の背景設定</label>
+                        <textarea id="customSetting" rows="2" placeholder="AIに最初に理解させたい世界情勢やプレイヤーの境遇を記述してください" class="w-full px-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+                    </div>
+                </div>
+
+                <!-- Common Inputs -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
+                            <span class="bg-indigo-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">2</span>
+                            プレイヤーの名前
+                        </label>
+                        <input type="text" id="playerName" placeholder="例：主人公" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
+                            <span class="bg-indigo-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">3</span>
+                            難易度設定
+                        </label>
+                        <select id="difficulty" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white">
+                            <option value="標準的なバランス">標準（スタンダード）</option>
+                            <option value="ハードコア（厳しいリソース制約と難解な謎）">ハードコア（難関）</option>
+                            <option value="カジュアル（物語の進行を優先）">カジュアル（物語重視）</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Style Selector -->
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
+                        <span class="bg-indigo-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">4</span>
+                        ビジュアル画風
+                    </label>
+                    <select id="artStyle" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white">
+                        <option value="リアル（実写映画のような緻密でフォトリアルな描写）">リアル</option>
+                        <option value="アニメ（日本のアニメーション映画風）">アニメ</option>
+                        <option value="パステル（淡い色合いと柔らかな筆致の幻想的な描写）">パステル</option>
+                        <option value="粘土（ストップモーション・クレイアニメ風）">粘土</option>
+                        <option value="スケッチ（鉛筆画や木炭画のようなラフな線画風）">スケッチ</option>
+                        <option value="水彩（透明感と滲みを感じさせる水彩画風）">水彩</option>
+                        <option value="油絵（厚塗りの質感とキャンバスの筆致を感じる重厚な風合い）">油絵</option>
+                        <option value="水墨（伝統的な白黒のコントラストが美しい水墨画風）">水墨</option>
+                    </select>
+                </div>
+
+                <!-- Generate Buttons -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-6">
+                    <button onclick="generatePrompts()" class="md:col-span-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-2xl shadow-lg transition-transform active:scale-95 flex items-center justify-center gap-2">
+                        プロンプトを生成する
+                    </button>
+                    <button onclick="resetAll()" class="bg-white hover:bg-gray-50 text-gray-500 font-bold py-4 rounded-2xl border border-gray-200 transition-all active:scale-95">
+                        リセット
+                    </button>
+                </div>
+            </div>
+
+            <!-- Output Area -->
+            <div id="outputSection" class="hidden border-t border-gray-100 bg-gray-50 p-6 md:p-10 space-y-8 animate-fade-in">
+                
+                <!-- 1. Visual Prompt -->
+                <div class="prompt-card bg-white ring-1 ring-black/5">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-bold text-indigo-700 flex items-center gap-2">
+                            <span class="w-6 h-6 bg-indigo-100 text-indigo-600 rounded flex items-center justify-center text-xs">Step 1</span>
+                            ビジュアル生成用プロンプト
+                        </h3>
+                    </div>
+                    <pre id="visualPromptResult" class="bg-gray-900 text-gray-300 p-4 rounded-xl text-xs overflow-x-auto whitespace-pre-wrap mb-4 font-mono leading-relaxed"></pre>
+                    <button onclick="copyText('visualPromptResult')" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl text-sm font-bold transition-all shadow hover:shadow-indigo-200">
+                        このプロンプトをコピー
+                    </button>
+                </div>
+
+                <!-- 2. GM Prompt -->
+                <div class="prompt-card bg-white ring-1 ring-black/5">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-bold text-emerald-700 flex items-center gap-2">
+                            <span class="w-6 h-6 bg-emerald-100 text-emerald-600 rounded flex items-center justify-center text-xs">Step 2</span>
+                            ゲームマスター開始用プロンプト
+                        </h3>
+                    </div>
+                    <pre id="gmPromptResult" class="bg-gray-900 text-emerald-100/80 p-4 rounded-xl text-xs overflow-x-auto whitespace-pre-wrap mb-4 font-mono leading-relaxed"></pre>
+                    <button onclick="copyText('gmPromptResult')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl text-sm font-bold transition-all shadow hover:shadow-emerald-200">
+                        このプロンプトをコピー
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Footer / Credits -->
+        <footer class="text-center text-gray-400 text-xs">
+            <p>© 2024 AI Adventure Game Project. Released under the MIT License.</p>
+        </footer>
+    </main>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-8 py-3 rounded-full shadow-2xl transition-all duration-300 opacity-0 scale-90 pointer-events-none text-sm z-50">
+        Copied to clipboard!
+    </div>
+
+    <script>
+        let currentScenario = 'mystery';
+
+        const scenarioData = {
+            mystery: {
+                id: 'mystery',
+                visualDesc: '雪深い夜の古い木造ペンションの外観。窓から漏れる微かな橙色の灯りと、雪原に伸びる不穏な長い人影。',
+                promptBase: `あなたは熟練の推理小説家であり、最高のゲームマスターです。
+## 基本設定
+- ジャンル：推理サスペンス（クローズド・サークル）
+- 舞台：吹雪で孤立した山奥のペンション
+- 登場人物：プレイヤー（刑事）、オーナー（必須）、その他3名の宿泊客。
+- 事件：夕食後、ある客室で1名が遺体で発見された。
+- 勝利条件：明朝のパトロール隊到着までに、犯人を特定し動機を解明すること。`
+            },
+            dungeon: {
+                id: 'dungeon',
+                visualDesc: '苔むした湿った石壁に囲まれた広大な地下迷宮の通路。遠くに光る謎の生物の瞳と、床に散らばる古い錆びた武具。',
+                promptBase: `あなたはダークファンタジーの熟練ゲームマスターです。
+## 基本設定
+- ジャンル：迷宮探索型RPG
+- 舞台：忘れ去られた古王の地下迷宮。
+- 初期装備：古い松明、ナイフ、薬草×3。
+- 勝利条件：迷宮の最深部を抜け、光射す地上の出口へたどり着くこと。`
+            },
+            escape: {
+                id: 'escape',
+                visualDesc: '無機質で清潔すぎる謎の個室。機能的なベッドと机、不自然に固く閉ざされた強化プラスチックのドア、天井の監視カメラ。',
+                promptBase: `あなたは脱出ゲームの熟練監修者です。
+## 基本設定
+- ジャンル：密室脱出アドベンチャー
+- 舞台：身に覚えのない研究施設の一室。
+- 状況：部屋にはロックがかかっており、壁には不気味なカウントダウンが表示されている。
+- 勝利条件：部屋に隠されたギミックを解き明かし、セキュリティを突破して脱出すること。`
+            },
+            custom: {
+                id: 'custom',
+                visualDesc: '',
+                promptBase: ''
+            }
+        };
+
+        function selectScenario(id) {
+            currentScenario = id;
+            document.querySelectorAll('.scenario-btn').forEach(btn => {
+                btn.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600', 'ring-4', 'ring-indigo-100');
+                btn.classList.add('border-indigo-50', 'bg-white', 'text-gray-800');
+            });
+            const selected = document.getElementById('btn-' + id);
+            selected.classList.remove('border-indigo-50', 'bg-white', 'text-gray-800');
+            selected.classList.add('bg-indigo-600', 'text-white', 'border-indigo-600', 'ring-4', 'ring-indigo-100');
+            
+            document.getElementById('customForm').classList.toggle('hidden', id !== 'custom');
+        }
+
+        // Initialize default
+        selectScenario('mystery');
+
+        function generatePrompts() {
+            const sc = scenarioData[currentScenario];
+            const name = document.getElementById('playerName').value || "プレイヤー";
+            const diff = document.getElementById('difficulty').value;
+            const artStyle = document.getElementById('artStyle').value;
+
+            // 1. Visual Prompt Logic
+            let visualDesc = sc.visualDesc;
+            if (currentScenario === 'custom') {
+                visualDesc = document.getElementById('customSetting').value || '未知の世界の象徴的な風景';
+            }
+            const visualPrompt = `画像生成を実行してください。
+テーマ：${visualDesc}
+画風：${artStyle}
+【制約事項】
+- 画像内にはテキスト（文字）、数字、セリフ、UI、フレームを描かないでください。
+- ゲームの導入（アバンタイトル）として、没入感の高い一枚のキービジュアルを作成してください。`;
+
+            // 2. GM Prompt Logic
+            let base = sc.promptBase;
+            if (currentScenario === 'custom') {
+                const cGenre = document.getElementById('customGenre').value || 'アドベンチャー';
+                const cGoal = document.getElementById('customGoal').value || '物語の完結';
+                const cSetting = document.getElementById('customSetting').value || 'プレイヤーにとって未知の場所';
+                base = `あなたは卓越した物語の創造者であり、最高のゲームマスターです。\n## 基本設定\n- ジャンル：${cGenre}\n- 舞台：${cSetting}\n- 勝利条件：${cGoal}`;
+            }
+
+            const gmPrompt = `${base}
+
+## 状況の同期
+プレイヤーは現在、あなたが生成した画像に描かれた光景を目の当たりにしています。
+生成された画像のディテールを物語に取り入れつつ、物語を開始してください。
+
+## ゲームの基本ルール
+1. プレイヤーの名前は「${name}」、難易度は「${diff}」として扱います。
+2. 状況描写の後は必ず 3つの選択肢 [A][B][C] と、[自由入力]の案内を提示してターンを終了してください。
+3. 毎ターン、回答の末尾に現在のステータス（時刻、体力、所持品、フラグ状況など）を簡潔に表示してください。
+
+それでは、冒険の始まりとなる最初の描写（オープニング）を記述してください。`;
+
+            document.getElementById('visualPromptResult').innerText = visualPrompt;
+            document.getElementById('gmPromptResult').innerText = gmPrompt;
+            document.getElementById('outputSection').classList.remove('hidden');
+            document.getElementById('outputSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function copyText(id) {
+            const text = document.getElementById(id).innerText;
+            const dummy = document.createElement("textarea");
+            document.body.appendChild(dummy);
+            dummy.value = text;
+            dummy.select();
+            document.execCommand("copy");
+            document.body.removeChild(dummy);
+            showToast();
+        }
+
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.remove('opacity-0', 'scale-90');
+            toast.classList.add('opacity-100', 'scale-100');
+            setTimeout(() => {
+                toast.classList.remove('opacity-100', 'scale-100');
+                toast.classList.add('opacity-0', 'scale-90');
+            }, 2500);
+        }
+
+        function resetAll() {
+            if(confirm('設定をリセットしてもよろしいですか？')) {
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>
